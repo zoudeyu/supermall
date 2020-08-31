@@ -1,11 +1,19 @@
 <template>
     <div id="home">
         <nav-bar class="home-nav"><template slot="navCenter">首页</template></nav-bar>
-        <home-swiper :banners="banners"/>
-        <recommend-view :recommends='recommends'></recommend-view>
-        <feature-vue />
-        <tab-control :titles="titles" class="tab-control" @tabBarClick="handleBarClick"></tab-control>
-        <goods-list :goods="goods[Object.keys(goods)[currentIndex]].list"></goods-list>
+        <bscroll :propWidth="'calc(100vh - 93px)'"
+        ref="bscrolltotop"
+        :probe-type='3' 
+        @scrollPosition="handleScroll"
+        :pull-upload='true'
+        @betterScroll="uploadMsg">
+            <home-swiper :banners="banners"/>
+            <recommend-view :recommends='recommends'></recommend-view>
+            <feature-vue />
+            <tab-control :titles="titles" class="tab-control" @tabBarClick="handleBarClick"></tab-control>
+            <goods-list :goods="goods[Object.keys(goods)[currentIndex]].list"></goods-list>
+        </bscroll>
+        <back-top @click.native="backTopClick" v-show="isShowBackTop"></back-top>
     </div>
 </template>
 
@@ -18,6 +26,8 @@ import FeatureVue from './childrenComps/FeatureVue'
 import NavBar from '../../components/common/navbar/NavBar'
 import TabControl from  '../../components/content/tabControl/TabControl'
 import GoodsList from '../../components/content/goods/GoodsList'
+import Bscroll from '../../components/common/scroll/Scroll'
+import BackTop from '../../components/content/backTop/BackTop'
 
 import {getHomeMultidata,getHomeGoods} from '../../network/home'
 
@@ -29,7 +39,9 @@ export default {
         RecommendView,
         FeatureVue,
         TabControl,
-        GoodsList
+        GoodsList,
+        Bscroll,
+        BackTop
     },
     data: function(){
         return {
@@ -41,7 +53,8 @@ export default {
                 'new': {page: 0, list: []},
                 'sell': {page: 0, list: []},
             },
-            currentIndex:0
+            currentIndex: 0,
+            isShowBackTop: false,
         }
     },
     created() {
@@ -77,6 +90,17 @@ export default {
         handleBarClick(index){
             console.log(index)
             this.currentIndex = index
+        },
+        backTopClick() {
+            this.$refs.bscrolltotop.scroll.scrollTo(0,0,500)
+        },
+        handleScroll(position){
+            this.isShowBackTop = !!(position.y < -1000)
+        },
+        uploadMsg(){
+            console.log('上拉加载更多')
+            this.getHomeGoods(Object.keys(this.goods)[this.currentIndex])
+            this.$refs.bscrolltotop.scroll.finishPullUp()
         }
     }
 }
