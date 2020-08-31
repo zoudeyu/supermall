@@ -23,7 +23,7 @@
       },
       animDuration: {
 		    type: Number,
-        default: 300
+        default: 1000
       },
       moveRatio: {
         type: Number,
@@ -45,12 +45,13 @@
     },
     mounted: function () {
       // 1.操作DOM, 在前后添加Slide
+      // 设置延时为一秒确定dom建立好了
       setTimeout(() => {
         this.handleDom();
 
         // 2.开启定时器
         this.startTimer();
-      }, 100)
+      }, 1000)
     },
     methods: {
 		  /**
@@ -120,9 +121,9 @@
         // 1.获取要操作的元素
         let swiperEl = document.querySelector('.swiper');
         let slidesEls = swiperEl.getElementsByClassName('slide');
-
         // 2.保存个数
         this.slideCount = slidesEls.length;
+        console.log(this.slideCount)
 
         // 3.如果大于1个, 那么在前后分别添加一个slide
         if (this.slideCount > 1) {
@@ -144,7 +145,7 @@
       touchStart: function (e) {
         // 1.如果正在滚动, 不可以拖动
         if (this.scrolling) return;
-
+        console.log(this.slideCount)
         // 2.停止定时器
         this.stopTimer();
 

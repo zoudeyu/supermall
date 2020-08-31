@@ -1,5 +1,5 @@
 <template>
-  <swiper class="home-swiper">
+  <swiper class="home-swiper" :swipercount="banners.length">
     <swiper-item v-for="item in banners" :key="item.image">
       <a :href="item.link">
         <img :src="item.image" alt="">
